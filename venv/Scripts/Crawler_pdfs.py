@@ -1,4 +1,5 @@
-import os, requests, random, json
+from wakepy import set_keepawake, unset_keepawake
+import os, requests, random, json, zipfile, io
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 # from lxml import etree
@@ -8,11 +9,14 @@ from my_lang_detect import lang_detect_on_txt_par
 from timeout import timeout
 from global_handlers import filter_urls_2, fix_the_html, filter_pdf_urls
 from pathlib import Path
+import pandas as pd
 import shutil
 import argparse
+import re
 
 def string_found_in_text(word_dict, l_text):
     found = False
+    l_string = ''
     for l_string in word_dict:
         if l_string in l_text or\
             l_string.lower() in l_text or\
@@ -21,7 +25,7 @@ def string_found_in_text(word_dict, l_text):
             print('Evrika {}'.format(l_string))         #del me at final version
             found = True
             break
-    return found
+    return found, l_string
 
 def clear_url(url):
     while(url.endswith('/')):
@@ -63,12 +67,31 @@ def get_languages(soup):
 def get_the_html(url):
     print(url)
     page = requests.get(url)
+    # webpage = urlopen(page, timeout=10).read()            #failed
 
     htmltext = page.text
     print(page)
 
     print(page.reason)
     return page
+
+def get_domain(url):
+    url = url.replace('www.', '')
+    url = url.replace('https://', '')
+    url = url.replace('http://', '')
+    url = url.split(".")[0]
+    return url
+
+def table_to_csv(url, f_path, f_name ):
+
+    # url = 'http://www.ffiec.gov/census/report.aspx?year=2011&state=01&report=demographic&msa=11500'
+    # f_path  = r'C:\Users\c.borovilou\Desktop\tmp\my_data.csv'
+    fin_path = os.path.join(f_path, f_name)
+    html = requests.get(url).content
+    df_list = pd.read_html(html)
+    df = df_list[-1]
+    df.to_csv(fin_path)
+    return 0
 
 def download_pdf(url, pdf_name, dir,domain):
 
@@ -84,7 +107,25 @@ def download_pdf(url, pdf_name, dir,domain):
         else:
             url_str =  domain + url_str
 
-    response = requests.get(url_str)
+    try:
+        response = requests.get(url_str)
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as errh:
+        # print( "Error Connecting: ", errh )
+        downl_status= "Http Error:" + str(errh)
+        return downl_status;
+    except requests.exceptions.ConnectionError as errc:
+        # print( "Error Connecting: ", errc )
+        downl_status = "Error Connecting:" + str(errc)
+        return downl_status;
+    except requests.exceptions.Timeout as errt:
+        # print("Error Connecting: ", errt)
+        downl_status= "Timeout Error: " + str(errt)
+        return downl_status;
+    except requests.exceptions.RequestException as err:
+        # print("Error Connecting: ", err)
+        downl_status= "Url error occured: " + str(err)
+        return downl_status;
 
     if response.status_code == 200:
         dir_f = os.path.join(dir, pdf_name + ".pdf")
@@ -110,45 +151,61 @@ parser.add_argument("--max_pages_to_visit", type=int, default=1000, help="Maximu
 
 parser.add_argument("--inpath",             type=str,               help="input json file.",            required=True)
 parser.add_argument("--out_dir",            type=str,               help="output root directory path.", required=True)
+parser.add_argument("--level_of_tolerance", type=int, default=2,    help="level of tolerance {1,2,3}", required=False)
 
-
-inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\GenericWebPageCrawler-master\GenericWebPageCrawler-master\karfoma2.json"     #admie
-inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\karfoma3.json"
+inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\karfoma3.json"     #admie
+inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\karfoma_hot.json"     #watt and wolt
+inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\pdfs_test.json"
+# inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\empty of pddfs.json"
 # inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\GenericWebPageCrawler-master\GenericWebPageCrawler-master\dnb_sample.json"     #admie
 # ot = r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\GenericWebPageCrawler-master\GenericWebPageCrawler-master\ott"
-ot = r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\GenericWebPageCrawler-master\GenericWebPageCrawler-master\eres"
+ot = r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\hot"
+extracted_files = 'files_found.csv'
+ignored_files = 'ignored_files.csv'
 
-with open(os.path.join(ot, 'ESG_files_found.txt'), 'w', encoding='utf-8') as f_esg:
+
+set_keepawake(keep_screen_awake=False)
+
+
+with open(os.path.join(ot, extracted_files), 'a', encoding='utf-8') as f_esg:
     f_esg.write("ESG files have been found at the following paths:\n")
-    f_esg.write("Path"+ '\t' +  'File_name' + '\t' + 'Download_Status' + '\n')
+    f_esg.write('Main URL'  + '\t' + 'Specific URL' + '\t' + 'File_name' + '\t' + 'Download_Status' + '\t' + "path_for_html"   + '\n')
     f_esg.close()
-# #argv = ['', ".\data2crawl.json", ".\eres"]
-# argv = ['', inp, ot]
 
-# args                = parser.parse_args()
-# inpath              = args.inpath
-# out_dir             = args.out_dir
-# max_pages_to_visit  = args.requests
 
 inpath = inp
 out_dir = ot
 max_pages_to_visit = 1000
-
-
+level_of_tolerance = 2
+# Documentation:     level_of_tolerance: Download all found Documents where:
+# {
+# 1: string of interest exist in page,                                                  #mild
+# 2: string of interest exist in page & at url,                                         #normal
+# 3: string of interest exist in page, at url & at pdf (requires more time)             #strict
+# }
 
 to_crawl    = json.load(open(inpath,'r',encoding='utf-8'))
-random.shuffle(to_crawl)
+# random.shuffle(to_crawl)
 
 pbar = tqdm(to_crawl)
-download_html = False
+download_html = True
+download_pdf_bool = True
 
 for (pic_type, base_url, pic_id) in pbar:
+
+    # # #  Temp -   pending to del >>
+    # excl_list = ["20" ]
+    #
+    # if pic_id in  excl_list:
+    #     pbar.close()
+    #     continue
+    # #  << Temp -   pending to del
+
     page_dir = os.path.join(out_dir, pic_type)
     pic_dir = os.path.join(out_dir, pic_type, pic_id)
-    url_domain = (urlparse(base_url).netloc).split(".")[1]
+    url_domain = get_domain(urlparse(base_url).netloc)
+        # (urlparse(base_url).netloc).split(".")[1]
     url_domain_full = urlparse(base_url).scheme + '://'  + urlparse(base_url).netloc
-    # >> PENDING TO UNCOMMENT - CB - START
-    # os.makedirs(pic_dir)
 
     if not os.path.exists(pic_dir):
         os.makedirs(pic_dir)
@@ -173,7 +230,7 @@ for (pic_type, base_url, pic_id) in pbar:
         pages_error     = open(os.path.join(pic_dir, 'pages_error.txt'),     'a', encoding='utf-8')
         pages_discarded = open(os.path.join(pic_dir, 'pages_discarded.txt'), 'a', encoding='utf-8')
 
-    # μπεσ ιστοσελιδα και παρε ολα τα html απο ο,τι url βρεις
+    # μπες ιστοσελιδα και παρε ολα τα html απο ο,τι url βρεις
     # αν δε, βρεις τη λεξούλα esg, κοιτα μηπως καλείται κανενα ulr με pdf και κάνε το download
     while(len(to_visit)>0):
 
@@ -182,8 +239,17 @@ for (pic_type, base_url, pic_id) in pbar:
         to_visit    = to_visit[1:]
         already_visited.add(url)
 
+        # start prison 28.01
+        # HEADERS = {'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'}
+
+        # end prison 28.01
+
+        print(url)
+
+
         try:
             page = get_the_html(url)
+            # page = get_the_html(url, HEADERS)     #failed
 
         except:
             print('Error for page: {}'.format(url))
@@ -216,42 +282,77 @@ for (pic_type, base_url, pic_id) in pbar:
         esg_dict = [
         'ESG',
         'ΒΙΩΣΙΜΗ ΑΝΑΠΤΥΞΗ',
-        'ΒΙΩΣΙΜΗΣ',
+        'ΒΙΩΣΙΜΗ',
         'ΒΙΩΣΙΜΌΤΗΤΑ',
+        'viosim',
+        'viosimi',
         'Environmental Social Governance',
         'Sustainable',
         'Sustainability', 'CSR'
+            #,'eba', 'εβα' , 'CDP', 'GRI'      #for εκθεση βιωσιμης ανάπτυξης
         ]
 
-        # string_of_interest = 'ESG'
-        esg_exists = string_found_in_text(esg_dict, soup.text)
-        ####    CAN BE IMPROVED USING A DICTIONARY >>
-        # if esg_exists == False:
-        #     string_of_interest = 'ΒΙΩΣΙΜΗ ΑΝΑΠΤΥΞΗ'
-        #     esg_exists = string_found_in_text(string_of_interest, soup.text)
-        # if esg_exists == False:
-        #     string_of_interest = 'Environmental Social Governance'
-        #     esg_exists = string_found_in_text(string_of_interest, soup.text)
+        # esg_exists = False
+        # dict_str = ''
+        esg_exists, dict_str = string_found_in_text(esg_dict, soup.text)
+
+
+        # delete me !!! PENDING >>
+        # if download_pdf_bool == False:
+        #     esg_exists = False
+        # << delete me !!! PENDING
 
         if esg_exists == True:
 
             pdf_dir = ''
             # # -- Isolate pdf links & download them --
             links = soup.find_all('a')
-            # for link in links:
-            #     if ('.pdf' in link.get('href', [])):
+
+
             gen_links = ( link for link in links if ('.pdf' in link.get('href', [])) )
+            # gen_links2 = ( link for link in links if ('.zip' in link.get('href', [])) )
             for link in gen_links:
-                pdf_dir = os.path.join(page_dir, 'esg_pdf')
+                print('\n {}'.format(link))
+                esg_exists_in_url, dict_str = string_found_in_text(esg_dict, link['href'])
+                if level_of_tolerance > 1 and esg_exists_in_url == False:
+                    ignore_dir = os.path.join(page_dir, 'ignored_urls')
+                    if not os.path.exists(ignore_dir):
+                        os.makedirs(ignore_dir)
+                    with open(os.path.join(ignore_dir, ignored_files), 'a', encoding='utf-8') as f_ignr:
+                        ign_url = str(link['href'])
+                        if (ign_url.startswith('/')):  # case when webpage is dynamically build in html#
+                            if ('www.' not in ign_url):
+                                ign_url = url_domain_full + ign_url
+                        f_ignr.write(ign_url + '\n')
+                        f_ignr.close()
+                    continue
+                # else:
+
+                # delete me !!! PENDING >>
+                if download_pdf_bool == False:
+                    continue
+                # << delete me !!! PENDING
+
+                pdf_dir = os.path.join(page_dir, dict_str.upper() + '_files')
                 if not os.path.exists(pdf_dir):
                     os.makedirs(pdf_dir)
-                i += 1
+
+                # if link.contents[0] != '':
+                if link.text != '':
+
+                    # file_descr = ''.join(e for e in link.contents[0] if e.isalnum())
+                    file_descr = link.text
+                else:
+                    i += 1
+                    file_descr = str(i)
                 # f_name  = string_of_interest + '_' + str(url_domain) + '_' + str(i)
-                f_name  = 'ESG' + '_' + str(url_domain) + '_' + str(i)
+                f_name  = dict_str.upper() + '_' + str(url_domain) + '_' + str(i)       #new28
 
                 f_downl_status = download_pdf(link, f_name, pdf_dir, url_domain_full)
-                with open(os.path.join(ot, 'esg_filesfound.txt'), 'a', encoding='utf-8') as f_esg:
-                    f_esg.write(pdf_dir + '\t' + f_name +  '\t' + f_downl_status)
+                # f_downl_status = download_zip(link, f_name, pdf_dir) #, url_domain_full)
+                with open(os.path.join(ot, extracted_files), 'a', encoding='utf-8') as f_esg:
+                    # f_esg.write(pdf_dir + '\t' + f_name +  '\t' + f_downl_status + '\n')
+                    f_esg.write(base_url + '\t' + url + '\t' + f_name + '\t' + f_downl_status + '\t' + os.path.join(pic_type,pic_id) + '\n')
                     f_esg.close()
         ################################################        12.01.2023 <<
         ####################################################################################
@@ -284,3 +385,4 @@ for (pic_type, base_url, pic_id) in pbar:
         pages_discarded.close()
         pages_error.close()
 
+unset_keepawake()

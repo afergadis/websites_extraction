@@ -1,4 +1,3 @@
-# Try to apply for https://towardsdatascience.com/a-guide-to-scraping-html-tables-with-pandas-and-beautifulsoup-7fc24c331cf7
 import pandas as pd
 import numpy as np
 import requests

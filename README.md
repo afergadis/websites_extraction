@@ -19,13 +19,13 @@ The steps are the following:
 * There is also available a script of the crawler designed to read local HTML files (instead of URLs as decribed in step 2), in order to extract ESG pdf files. (script related &rightarrow; [Crawler_pdfs_from_html_files.py](venv_tst/Scripts/Crawler_pdfs_from_html_files.py))
 
 ## How to run
-- Crawler_pdfs_from_html_files.py <br>
-   In order to run the script, user needs to give as input: 
-    1. The input path that contains folders per website under which there are stored all HTML files (Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\Downloads\thesis\inp) <br> 
-    2. The output path that user desires to store the results (ESG/Sustainability pdf files) per website  (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\Downloads\thesis\out) <br> 
+- Crawler_pdfs_from_html_files.py & crawler_pdfs.py <br>
+   In order to run the script, user needs to give as input 2 parameters: 
+    1. The input path that contains folders per website under which there are stored all HTML files (Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\\inp) <br> 
+    2. The output path that user desires to store the results (ESG/Sustainability pdf files) per website  (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br> 
    
-   Thus the command at terminal will be similar to: "C:\Users\userXXX\PycharmProjects\pythonProject1_thesis\venv_tst\Scripts\python.exe C:\Users\c.borovilou\PycharmProjects\pythonProject1_thesis\venv_tst\Scripts\Crawler_pdfs_from_html_files.py --inpath C:\Users\userXXX\Downloads\thesis\inp --out_dir C:\Users\userXXX\Downloads\thesis\out 
-"
+   Thus the command at terminal will be similar to: "C:\Users\userXXX\....\python.exe C:\Users\userXXX\...\Crawler_pdfs_from_html_files.py --inpath C:\Users\userXXX\Downloads\thesis\inp --out_dir C:\Users\userXXX\Downloads\thesis\out"
+   
 
 Optional feature:
 After first run a (default) dictionary for words of interest ([ESG Dictionary](content_for_user/esg_dict.csv)) is generated at input forlder so that user can maintain it. 
@@ -35,7 +35,7 @@ After first run a (default) dictionary for words of interest ([ESG Dictionary](c
 Run the command
 
 `pip install -r requirements.txt`
-
+<!-- 
 ## Requirements
 
 - Jupyter Notebooks
@@ -44,13 +44,13 @@ Run the command
 - Matplotlib
 - Seaborn
 - Scipy
-- Scikit-learn
+- Scikit-learn -->
 
-## Usage
+<!-- ## Usage
 
 Within the `notebooks` folder, there are two notebooks, they should be run in the following order:
 
 1. `1_visulizing.ipynb`: Exploratory data analysis, cleaning and visualization.
 2. `2_modeling.ipynb`: Feature engineering, preprocessing, ML Modeling and evaluation
 
-I have put the `life_expectancy.csv` file containing the dataset in the `data` folder, and put it in the `.gitignore` file to avoid uploading it to GitHub, however, you can download it from the Kaggle link above.
+I have put the `life_expectancy.csv` file containing the dataset in the `data` folder, and put it in the `.gitignore` file to avoid uploading it to GitHub, however, you can download it from the Kaggle link above. -->

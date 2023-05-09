@@ -17,6 +17,7 @@ numpy==1.24.2
 pandas==1.5.3
 pathlib==1.0.1
 pipreqs==0.4.13
+progress==1.6
 python-dateutil==2.8.2
 pytz==2023.2
 regex==2023.3.23

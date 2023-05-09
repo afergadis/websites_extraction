@@ -149,6 +149,8 @@ print('give input folder,', args.inpath)
 # inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\dnb_sample.json"     #admie
 # inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\karfoma_hot.json"     #admie
 # ot = r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\ot"
+inp= args.inpath
+ot = args.out_dir
 extracted_files = 'files_found.csv'
 ignored_files = 'ignored_files.csv'
 

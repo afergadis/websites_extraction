@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from collections import Counter
 from tqdm import tqdm
+import datetime
 from my_lang_detect import lang_detect_on_txt_par
 from timeout import timeout
 from global_handlers import filter_urls_2, fix_the_html, filter_pdf_urls
@@ -143,12 +144,7 @@ parser.add_argument("--level_of_tolerance", type=int, default=2,    help="level 
 
 # Parse the argument
 args = parser.parse_args()
-# Print "Hello" + the user input argument
-print('give input folder,', args.inpath)
 
-# inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\dnb_sample.json"     #admie
-# inp= r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\karfoma_hot.json"     #admie
-# ot = r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\ot"
 inp= args.inpath
 ot = args.out_dir
 extracted_files = 'files_found.csv'

@@ -24,7 +24,7 @@ The steps are the following:
     1. The local input path that contains folders per website under which there are stored all HTML files (Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp) <br> 
        (Example of input data form can be found [here](content_for_user/example with sample data (before run - no results).zip) )
     2. The local output path that user desires to store the results (ESG/Sustainability pdf files) per website  (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br> 
-       (Example of input & output data can be found [here](content_for_user/example with sample data (after run - with results ).zip) )
+       (Example of input & output data can be found [here](content_for_user/example%20 with%20sample%20data%20(after%20run%20-%20with%20results%20).zip) )
    
    Thus the command at terminal will be similar to: `C:\Users\userXXX\...\python.exe C:\Users\userXXX\...\Crawler_pdfs_from_html_files.py --inpath C:\Users\userXXX\D..\inp --out_dir C:\Users\userXXX\..\out`
    

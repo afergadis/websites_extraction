@@ -1,5 +1,4 @@
 from wakepy import set_keepawake, unset_keepawake
-# from html.parser import HTMLParser
 import os, requests, random, json, zipfile, io
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
@@ -14,6 +13,7 @@ import pandas as pd
 import shutil
 import argparse
 import re
+import csv
 
 def string_found_in_text(word_dict, l_text):
     found = False
@@ -145,6 +145,51 @@ def timestamp_str():
     now = datetime.datetime.now()
     ts_str = str(now.day) + '.' + str(now.month) + '.' + str(now.year) + '_' + str(now.hour) + '.' + str(now.minute) + '.' + str(now.second)
     return ts_str
+
+def set_dictionary(input_fold, dict_file):
+    # this function initializes a words-dictionary and stores it in input path.
+    # User can afterwards maintain the words use locally (at a csv file)
+    if not os.path.exists(os.path.join(input_fold, dict_file)):
+        dictionary = [
+        'ESG',
+        'ΒΙΩΣΙΜΗ ΑΝΑΠΤΥΞΗ',
+        'ΒΙΩΣΙΜΗ',
+        'ΒΙΩΣΙΜΌΤΗΤΑ',
+        'viosim',
+        'Biosim',
+        'Environmental Social Governance', 'environmental-social-governance',  'environmental_social_governance', 'Environmentalsocialgovernance',
+        'Sustainable', 'Sustainability',
+        'CSR', 'CDP', 'GRI',
+        'climate', 'footprint', 'greenhouse', 'ecological', 'biodiversity'
+            #,'eba', 'εβα' , 'CDP', 'GRI'      #for εκθεση βιωσιμης ανάπτυξης
+        ]
+
+
+        with open(os.path.join(input_fold, dict_file ), 'w', encoding='utf-8') as f_dict:
+            f_dict.write(','.join(map(str, dictionary)))
+
+    else:
+        inp = os.path.join(input_fold, dict_file)
+        file = open(inp, "r", encoding="utf8")
+        dictionary = list(csv.reader(file, delimiter=","))[0]
+        file.close()
+    return dictionary
+
+def get_domains_from_soup(link, soup):
+    initial_url_full = str(link['href'])
+    base_url = url_domain = url_domain_full = ''
+    for soup_link in soup.select('link[rel*=canonical]'):
+        base_url = soup_link['href']
+        url_domain = get_domain(urlparse(base_url).netloc)
+        url_domain_full = urlparse(base_url).scheme + '://' + urlparse(base_url).netloc
+
+        if (link['href'].startswith('/')):  # case when webpage is dynamically build in html#
+            if ('www.' in link['href']):
+                print('check here please''{}\n'.format(link['href']))
+                initial_url_full = ''
+            else:
+                initial_url_full = url_domain_full + str(link['href'])
+    return base_url, url_domain, url_domain_full, initial_url_full
 #  ------------ ------------ ------------ ------------ ------------ ------------ ------------ ------------ ------------
 #  ------------ ------------ ------------ ------------ ------------ ------------ ------------ ------------ ------------
 
@@ -153,8 +198,6 @@ def timestamp_str():
 parser = argparse.ArgumentParser(description='Extract ESG files from HTML files')
 # parser.add_argument("--max_pages_to_visit", type=int, default=1000, help="Maximum pages to visit.",     required=False)
 
-
-# parser.add_argument("--inpath",             type=str,               help="input json file.",            required=True)
 parser.add_argument("--inpath",             type=str,               help="input path with folders of HTML files.",            required=True)
 parser.add_argument("--out_dir",            type=str,               help="output root directory path.", required=True)
 parser.add_argument("--max_pages_to_visit", type=int, default=1000, help="Maximum pages to visit.",     required=False)
@@ -163,17 +206,15 @@ parser.add_argument("--level_of_tolerance", type=int, default=2,    help="level 
 
 # Parse the argument
 args = parser.parse_args()
-# # Print "Hello" + the user input argument
-# print('give input folder,', args.inpath)
-
 inp= args.inpath
-ot = args.out_dir
+# ot = args.out_dir
+ot = os.path.join(args.out_dir, 'results_' + str(timestamp_str() ) )
+if not os.path.exists(ot):
+    os.makedirs(ot)
 
-
-# inp = r"C:\Users\c.borovilou\OneDrive - Public-Group\διπλωματική\boilerplate_removal\out"
-# ot = r"C:\Users\c.borovilou\OneDrive - Public-Group\Desktop\MSc\διπλωματική\out"
 
 extracted_files = 'files_found.csv'
+esg_dict_f = 'esg_dict.csv'
 ignored_files = 'ignored_files_' + str(timestamp_str()) +  '.csv'
 
 
@@ -182,13 +223,13 @@ set_keepawake(keep_screen_awake=False)
 
 with open(os.path.join(ot, extracted_files), 'w', encoding='utf-8') as f_esg:         #check here
 # with open(os.path.join(ot, extracted_files), 'a', encoding='utf-8') as f_esg:
-    f_esg.write("ESG files have been found at the following paths:\n")
-    f_esg.write('Main URL'  + '\t' + 'Specific URL' + '\t' + 'File_name' + '\t' + 'Download_Status' + '\t' + "path_for_html"   + '\n')
+#     f_esg.write("ESG files have been found at the following paths:\n")
+    f_esg.write('Main URL'  + '\t' + 'Specific URL' + '\t' + 'File_name' + '\t' + 'Download_Status' + '\t' + "folder_name_of_HTML"   + '\n')
     f_esg.close()
 
 
 inpath = inp
-out_dir = ot
+# out_dir = ot
 max_pages_to_visit = 1000
 level_of_tolerance = 2
 # Documentation:     level_of_tolerance: Download all found Documents where:
@@ -198,34 +239,27 @@ level_of_tolerance = 2
 # 3: string of interest exist in page, at url & at pdf (requires more time)             #strict
 # }
 
-# >> 20.04.2023
-
 os.environ['dir_name'] = inpath
 os.chdir(os.environ['dir_name'])
 
-
-# random.shuffle(to_crawl)
-
-download_html = False # True
 download_pdf_b = True # False
-
-
-# >> 20.04.2023
 c = i = 0
+
+# Create the list of file found inside folder of input path:
 folders = [f for f in os.listdir(inpath) if os.path.isdir(os.path.join(inpath, f))]
 
 # loop through the list of folders
-for f_name in folders:
+for f_name in tqdm(folders):
 
     num_of_files = len(os.listdir(f_name))
-
     if num_of_files == 0:
         continue
     else:
+
         websites = [f.name for f in os.scandir(f_name) if f.is_file()]
         for site in websites:
 
-            # with open(f_name) as fp:
+            # Use Beautiful Soup to parse HTML
             path_dir = inpath + '\\' + f_name + '\\' + site
             with open(path_dir, encoding="utf8") as fp:
 
@@ -233,89 +267,65 @@ for f_name in folders:
 
             soup = BeautifulSoup(html, 'html.parser')
 
-
-# << 20.04.2023
-            # c = i = 0
             c += 1
 
-            page_dir = out_dir
+            # A. Create a "dictionary of words" file defining specific-enough content for the scope of our search
+            # B. Export it as a .csv file at input folder so that user can maintain the "dictionary" easily.
+            # C. Read it in a list so that program can use it
+            esg_dict = set_dictionary(inp, esg_dict_f )
 
-            esg_dict = [
-            'ESG',
-            'ΒΙΩΣΙΜΗ ΑΝΑΠΤΥΞΗ',
-            'ΒΙΩΣΙΜΗ',
-            'ΒΙΩΣΙΜΌΤΗΤΑ',
-            'viosim',
-            'viosimi',
-            'Environmental Social Governance',
-            'Sustainable',
-            'Sustainability', 'CSR'
-                #,'eba', 'εβα' , 'CDP', 'GRI'      #for εκθεση βιωσιμης ανάπτυξης
-            ]
-
+            # Checkpoint 1: Check if HTML file contains any word that exists in a our dictionary
             esg_exists, dict_str = string_found_in_text(esg_dict, soup.text)
 
 
-            # delete me !!! PENDING >>
-            if download_pdf_b == False:
-                esg_exists = False
-            # << delete me !!! PENDING
-
-            if esg_exists == True:
+            # Checkpoint 2: Check if URL itself contains any word that exists in a our dictionary
+            if esg_exists == True and download_pdf_b == True:
 
                 pdf_dir = ''
                 # # -- Isolate pdf links & download them --
                 links = soup.find_all('a')
-
-
                 gen_links = ( link for link in links if ('.pdf' in link.get('href', [])) )
+
+                cnt = 0
                 for link in gen_links:
-                    cnt = 0
-                    # print('\n {}'.format(link))  #-cb 04.05.2023
+                    cnt += 1
+                    initial_url_full = str(link['href'])
+
+                    #  --- 1. Get domain & Correct dynamical URLs ---
+                    base_url,url_domain, url_domain_full, initial_url_full = get_domains_from_soup(link, soup)
+
+                    # --- 2. Choose if you will ignore pdf (but log it in file) or you will download it ---
                     esg_exists_in_url, dict_str = string_found_in_text(esg_dict, link['href'])
                     if level_of_tolerance > 1 and esg_exists_in_url == False:
-                        ignore_dir = os.path.join(page_dir, 'ignored_urls')
+                        ignore_dir = os.path.join(ot, 'ignored_urls')
                         if not os.path.exists(ignore_dir):
                             os.makedirs(ignore_dir)
                         with open(os.path.join(ignore_dir, ignored_files), 'a', encoding='utf-8') as f_ignr:
-                            # f_ignr.write("ESG files have been found at the following paths:\n")
-                            f_ignr.write(str(link['href']) + '\n')
+                            # f_ignr.write(str(link['href']) + '\n')
+                            f_ignr.write(str(initial_url_full) + '\n')
                             f_ignr.close()
                         continue
-                    # else:
 
-                    pdf_dir = os.path.join(page_dir, dict_str.upper() + '_files')
+                    print(initial_url_full)
+
+                    # pdf_dir = os.path.join(ot, dict_str.upper() + '_files')
+                    pdf_dir = os.path.join(ot, url_domain.upper() + '_files')
                     if not os.path.exists(pdf_dir):
                         os.makedirs(pdf_dir)
 
-                    if link.text != '':
-                        file_descr = link.text
-                    else:
-                        i += 1
-                        file_descr = str(i)
-                    # f_name  = string_of_interest + '_' + str(url_domain) + '_' + str(i)
+                    # if link.text != '':
+                    #     file_descr = re.sub(r'[^\w]+', '', link.text)
+                    # else:
+                    #     i += 1
+                    #     file_descr = str(i)
 
-                    for soup_link in soup.select('link[rel*=canonical]'):
-                        print(soup_link['href'])
-                        base_url = soup_link['href']
-                        url_domain = get_domain(urlparse(base_url).netloc)
-                        url_domain_full = urlparse(base_url).scheme + '://'  + urlparse(base_url).netloc
-
-                        if (link['href'].startswith('/')):  # case when webpage is dynamically build in html#
-                            if ('www.' in link['href']):
-                                print('check here please''{}\n'.format(link['href']))
-                                initial_url_full = ''
-                            else:
-                                initial_url_full =  url_domain_full + str(link['href'])
-                    cnt += 1
+                    # Build pdf description
                     f_descr  = dict_str.upper() + '_' + str(url_domain) + '_' + str(cnt)       #new28
 
                     f_downl_status = download_pdf(link, f_descr, pdf_dir, url_domain_full)
                     # f_downl_status = download_zip(link, f_descr, pdf_dir) #, url_domain_full)
                     with open(os.path.join(ot, extracted_files), 'a', encoding='utf-8') as f_esg:
-                        # f_esg.write(pdf_dir + '\t' + f_descr +  '\t' + f_downl_status + '\n')
-                        # f_esg.write(base_url + '\t' + initial_url_full + '\t' + f_descr + '\t' + f_downl_status + '\t' + os.path.join(pic_type,pic_id) + '\n')
-                        f_esg.write(base_url + '\t' + initial_url_full + '\t' + f_descr + '\t' + f_downl_status +  '\n')
+                        f_esg.write(base_url + '\t' + initial_url_full + '\t' + f_descr + '\t' + f_downl_status + '\t' + f_name + '\n')
                         f_esg.close()
 
                     initial_url_full = url_domain_full = url_domain = base_url = ''

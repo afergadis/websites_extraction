@@ -24,7 +24,7 @@ The steps are the following:
     1. The local input path that contains folders per website under which there are stored all HTML files (Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp) <br> 
     2. The local output path that user desires to store the results (ESG/Sustainability pdf files) per website  (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br> 
    
-   Thus the command at terminal will be similar to: "C:\Users\userXXX\....\python.exe C:\Users\userXXX\...\Crawler_pdfs_from_html_files.py --inpath C:\Users\userXXX\Downloads\thesis\inp --out_dir C:\Users\userXXX\Downloads\thesis\out"
+   Thus the command at terminal will be similar to: `C:\Users\userXXX\...\python.exe C:\Users\userXXX\...\Crawler_pdfs_from_html_files.py --inpath C:\Users\userXXX\D..\inp --out_dir C:\Users\userXXX\..\out`
    
    Optional feature:
 After first run a (default) dictionary for words of interest ([ESG Dictionary](content_for_user/esg_dict.csv)) is generated at input forlder so that user can maintain it. 
@@ -34,7 +34,7 @@ After first run a (default) dictionary for words of interest ([ESG Dictionary](c
     1. The local input path for [json file](content_for_user/data_from_dnb.json) that contains the websites under which there are stored all HTML files (Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp\data_from_dnb.json) <br> 
     2. The local output path that user desires to store the results (ESG/Sustainability pdf files) per website  (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br>
     <br>
-    Thus the command at terminal will be similar to: "C:\Users\userXXX\....\python.exe C:\Users\userXXX\...\Crawler_pdfs.py --inpath C:\Users\userXXX\Downloads\thesis\inp\data_from_dnb.json --out_dir C:\Users\userXXX\Downloads\thesis\out"
+    Thus the command at terminal will be similar to: `C:\Users\userXXX\...\python.exe C:\Users\userXXX\...\Crawler_pdfs.py --inpath C:\Users\userXXX\...\inp\data_from_dnb.json --out_dir C:\Users\userXXX\...\out`
 
 
 ## Install

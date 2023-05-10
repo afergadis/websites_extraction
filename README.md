@@ -18,6 +18,8 @@ The steps are the following:
     - Calculate percentage of successfully downloaded webpages
     - Calculate tokens found
     - Extract useful information:
+        + 66
+        + 55
     -    - Find innovative products of businesses (using trademarks)
     -    - Filter accordingly interesting content in order to distill the action of greek businesses regarding environmental responsability. <br> 
   Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )

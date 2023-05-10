@@ -39,6 +39,12 @@ After first run a (default) dictionary for words of interest ([ESG Dictionary](c
     Thus the command at terminal will be similar to: `C:\Users\userXXX\...\python.exe C:\Users\userXXX\...\Crawler_pdfs.py --inpath C:\Users\userXXX\...\inp\data_from_dnb.json --out_dir C:\Users\userXXX\...\out` .
 
 - [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py)<br>
+  Similarly, In order to run the script, user needs to give as input 2 parameters: 
+    1. The local **input path** contains folders with html files per website with the extracted plain text (**after** boilerplate removal).
+    <br>(Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp) <br> 
+    2. The local **output path** that user desires to store the results (ESG/Sustainability pdf files)<br>  
+       (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br>
+   
 
 ## Install
 

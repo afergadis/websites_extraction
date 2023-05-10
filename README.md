@@ -44,9 +44,12 @@ After first run a (default) dictionary for words of interest ([ESG Dictionary](c
     <br>(Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp) <br> 
     2. The local **output path** that user desires to store the results (ESG/Sustainability pdf files)<br>  
        (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br>
+       Sample data to use as input: [html files with plain text in file system](content_for_user/sample_input_plain_text_html.zip)
+    
+    Thus the command at terminal will be similar to: `C:\Users\userXXX\...\python.exe C:\Users\userXXX\...\Crawler_pdfs_from_html_files.py --inpath C:\Users\userXXX\D..\inp --out_dir C:\Users\userXXX\..\out`
    
 
-## Install
+## Install 
 
 Run the command
 

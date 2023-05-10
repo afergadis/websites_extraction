@@ -42,9 +42,10 @@ After first run a (default) dictionary for words of interest ([ESG Dictionary](c
   Similarly, In order to run the script, user needs to give as input 2 parameters: 
     1. The local **input path** contains folders with html files per website with the extracted plain text (**after** boilerplate removal).
     <br>(Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp) <br> 
+   _Sample data to use as input:_ [html files with plain text in file system](content_for_user/sample_input_plain_text_html.zip)
     2. The local **output path** that user desires to store the results (ESG/Sustainability pdf files)<br>  
        (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br>
-       Sample data to use as input: [html files with plain text in file system](content_for_user/sample_input_plain_text_html.zip)
+       
     
     Thus the command at terminal will be similar to: `C:\Users\userXXX\...\python.exe C:\Users\userXXX\...\Crawler_pdfs_from_html_files.py --inpath C:\Users\userXXX\D..\inp --out_dir C:\Users\userXXX\..\out`
    

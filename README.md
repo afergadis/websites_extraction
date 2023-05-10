@@ -17,8 +17,7 @@ The steps are the following:
 4. Evaluate web-scrapping process: 
     - calculate percentage of successfully downloaded webpages
     - Calculate tokens found
-    - Extract 
-  <br> Extract useful information:
+<br>Extract useful information:
     - Find innovative products of businesses (using trademarks)
     - Filter accordingly interesting content in order to distill the action of greek businesses regarding environmental responsability. <br> 
   Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )

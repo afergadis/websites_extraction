@@ -186,7 +186,7 @@ parser.add_argument("--out_dir",            type=str,               help="output
 
 args = parser.parse_args()
 inp= args.inpath
-ot = os.path.join(args.out_dir, 'meta_results_' + str(timestamp_str() + ".csv") )
+
 
 ape_dict_list = [
 'Ανανεώσιμες',
@@ -244,20 +244,24 @@ ape_dict_list = [
 # nltk.download('punkt')
 # nltk.download('stopwords')
 
+
+ot = os.path.join(args.out_dir, 'meta_results_' + str(timestamp_str() + ".csv") )
 trg_path = ot
-ot = os.path.join(args.out_dir, 'results_' + str(timestamp_str() ) )# path = r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\boilerplate_removal\1"
 path = inp
 os.chdir(path)
 
-num_of_files = len(os.listdir(path))
+num_of_fold = len(os.listdir(path))
 # os.chdir(r"C:\Users\c.borovilou\Desktop\MSc\διπλωματική\1 test")    #28.07
 # print( [name for name in os.listdir(".")] )
 i = 0
 data = []
 # f_name stands for each folder name of the path's folders
-with alive_bar(num_of_files) as bar:
+with alive_bar(num_of_fold) as bar:
 
     for f_name in os.listdir("."):
+
+        if os.path.isdir(os.path.join(path, f_name)) == False:
+            continue
 
         flag_fail = '1'
         i = i + 1

@@ -11,10 +11,17 @@ The pipeline of the procedure that is described in the thesis file, is shown in 
 ## Pipeline
 The steps are the following:
 1. Extract a **list** with domains of all the Greek businesses that belong to the energy factor (result: [data_from_dnb](content_for_user/data_from_dnb.json)  (source www.dnb.com) )
-2. Use a crawler algorithm that will navigate to the URLs in our [file](content_for_user/data_from_dnb.json) as well as all the subdomains that are called on these web pages & will extract their content (HTML files). Moreover it will extract document files (.pdf) refering to ESG factors using a _customizing_ dictionary of words as an content-filter method [ESG Dictionary](content_for_user/esg_dict.csv)
+2. Use a crawler algorithm that will navigate to the URLs in our [file](content_for_user/data_from_dnb.json) as well as all the links that lead to other links & will extract their content (HTML files). Moreover it will extract document files (.pdf) refering to ESG factors using a _custom_ dictionary  [ESG Dictionary](content_for_user/esg_dict.csv)
  (script related &rightarrow; [crawler_pdfs.py](venv_tst/Scripts/Crawler_pdfs.py))
 3. Use a boiler plate removal algorithm that removes HTML syntax and keep only the text (not publicly available in the repository)
-4. Evaluate web-scrapping process defining & calculating specific metrics. Filter accordingly also the content (text) that was extracted in order to distill the action of greek businesses regarding environmental responsability. Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )
+4. Evaluate web-scrapping process: 
+    - calculate percentage of successfully downloaded webpages
+    - Calculate tokens found
+    - Extract 
+  Extract useful information:
+    - Find innovative products of businesses (using trademarks)
+    - Filter accordingly interesting content in order to distill the action of greek businesses regarding environmental responsability. <br> 
+  Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )
 
 * There is also available a script of the crawler designed to read local HTML files (instead of URLs as decribed in step 2), in order to extract ESG pdf files. (script related &rightarrow; [Crawler_pdfs_from_html_files.py](venv_tst/Scripts/Crawler_pdfs_from_html_files.py))
 

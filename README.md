@@ -18,10 +18,8 @@ The steps are the following:
     - Calculate percentage of successfully downloaded webpages
     - Calculate tokens found
     - Extract useful information:
-        + 66
-        + 55
-    -    - Find innovative products of businesses (using trademarks)
-    -    - Filter accordingly interesting content in order to distill the action of greek businesses regarding environmental responsability. <br> 
+        + Find innovative products of businesses (using trademarks)
+        + Filter accordingly interesting content in order to distill the action of greek businesses regarding environmental responsability. <br> 
   Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )
 
 * There is also available a script of the crawler designed to read local HTML files (instead of URLs as decribed in step 2), in order to extract ESG pdf files. (script related &rightarrow; [Crawler_pdfs_from_html_files.py](venv_tst/Scripts/Crawler_pdfs_from_html_files.py))

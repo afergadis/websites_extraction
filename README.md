@@ -4,7 +4,7 @@ In this repository there are files are part of the Thesis: <br>
 
 
 
-Parts of the data engineering process that is described in the thesis file, written in Python, that all together consist the pipeline of the procedure shown in the image below:<br><br>
+Parts of the data engineering process that is described in the thesis file, written in Python & all together consist the pipeline of the procedure, are shown in the image below:<br><br>
 ![Pipeline](content_for_user/pipeline.jpg)
 
 

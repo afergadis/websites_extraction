@@ -14,12 +14,12 @@ The steps are the following:
 2. Use a crawler algorithm that will navigate to the URLs in our [file](content_for_user/data_from_dnb.json) as well as all the subdomains that are called on these web pages & will extract their content (HTML files). Moreover it will extract document files (.pdf) refering to ESG factors using a _customizing_ dictionary of words as an content-filter method [ESG Dictionary](content_for_user/esg_dict.csv)
  (script related &rightarrow; [crawler_pdfs.py](venv_tst/Scripts/Crawler_pdfs.py))
 3. Use a boiler plate removal algorithm that removes HTML syntax and keep only the text (not publicly available in the repository)
-4. Evaluate web-scrapping process defining & calculating specific metrics. Filter accordingly also the content (text) that was extracted in order to distill the action of greek businesses regarding environmental responsability. Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv/Scripts/meta_cleaning_2.py) )
+4. Evaluate web-scrapping process defining & calculating specific metrics. Filter accordingly also the content (text) that was extracted in order to distill the action of greek businesses regarding environmental responsability. Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )
 
 * There is also available a script of the crawler designed to read local HTML files (instead of URLs as decribed in step 2), in order to extract ESG pdf files. (script related &rightarrow; [Crawler_pdfs_from_html_files.py](venv_tst/Scripts/Crawler_pdfs_from_html_files.py))
 
 ## How to run
-- Crawler_pdfs_from_html_files.py<br>
+- [Crawler_pdfs_from_html_files.py](venv_tst/Scripts/Crawler_pdfs_from_html_files.py)<br>
    In order to run the script, user needs to give as input 2 parameters: 
     1. The local **input path** that contains folders per website under which there are stored all HTML files (Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp) <br> 
        (_Sample input data_ can be found [here](content_for_user/example%20with%20sample%20data%20(before%20run%20-%20no%20results).zip) )
@@ -31,13 +31,20 @@ The steps are the following:
    Optional feature:
 After first run a (default) dictionary for words of interest ([ESG Dictionary](content_for_user/esg_dict.csv)) is generated at input forlder so that user can maintain it. 
 
-- Crawler_pdfs.py <br>
+- [Crawler_pdfs.py](venv_tst/Scripts/Crawler_pdfs.py) <br>
   Similarly, in order to run the script, user needs to give as input 2 parameters: 
     1. The local input path for [json file](content_for_user/data_from_dnb.json) that contains the websites under which there are stored all HTML files (Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp\data_from_dnb.json) <br> 
     2. The local output path that user desires to store the results (ESG/Sustainability pdf files) per website  (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) 
    
     Thus the command at terminal will be similar to: `C:\Users\userXXX\...\python.exe C:\Users\userXXX\...\Crawler_pdfs.py --inpath C:\Users\userXXX\...\inp\data_from_dnb.json --out_dir C:\Users\userXXX\...\out` .
 
+- [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py)<br>
+  Similarly, In order to run the script, user needs to give as input 2 parameters: 
+    1. The local **input path** contains folders with html files per website with the extracted plain text (**after** boilerplate removal).
+    <br>(Input parameter parameter: _--inpath_) <br> (e.g. --inpath C:\Users\userXXX\inp) <br> 
+    2. The local **output path** that user desires to store the results (ESG/Sustainability pdf files)<br>  
+       (Input parameter parameter: _--out_dir_) <br> (e.g. --out_dir C:\Users\userXXX\out) <br>
+   
 
 ## Install
 

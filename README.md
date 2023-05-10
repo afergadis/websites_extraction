@@ -20,7 +20,7 @@ The steps are the following:
     - Extract useful information:
         + Find innovative products of businesses (using trademarks)
         + Filter accordingly interesting content in order to distill the action of greek businesses regarding environmental responsability
-  <br> Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )
+ <br><br> Export the results in a csv (script related &rightarrow; [meta_cleaning_2.py](venv_tst/Scripts/meta_cleaning_2.py) )
 
 * There is also available a script of the crawler designed to read local HTML files (instead of URLs as decribed in step 2), in order to extract ESG pdf files. (script related &rightarrow; [Crawler_pdfs_from_html_files.py](venv_tst/Scripts/Crawler_pdfs_from_html_files.py))
 

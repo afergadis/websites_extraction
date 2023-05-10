@@ -3,7 +3,7 @@ In this repository there are files are part of the Thesis: <br>
 [Automating the data acquisition of Businesses and their actions regarding environmental sustainability: The Energy Industry in Greece](content_for_user/Thesis_DI_CBorovilou.pdf)
 
 
-The pipeline of the procedure that is described in the thesis file, is shown in the image below and at the repository can be found the individual steps <br><br>
+The pipeline of the procedure that is described in the thesis file, is shown in the image below and at the repository can be found the code for the individual steps <br><br>
 <!-- Parts of the data engineering process that is described in the thesis file,  written in Python & all together consist the pipeline of the procedure, are shown in the image below: -->
 ![Pipeline](content_for_user/pipeline.jpg)
 

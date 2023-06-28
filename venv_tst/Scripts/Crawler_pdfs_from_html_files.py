@@ -260,7 +260,8 @@ for f_name in tqdm(folders):
         for site in websites:
 
             # Use Beautiful Soup to parse HTML
-            path_dir = inpath + '\\' + f_name + '\\' + site
+            # path_dir = inpath + '\\' + f_name + '\\' + site        #-27.06.2023
+            path_dir =  os.path.join(inpath, f_name, site)           #+27.06.2023
             with open(path_dir, encoding="utf8") as fp:
 
                 html = fp.read()
